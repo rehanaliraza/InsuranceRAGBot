@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  insurance-ragbot:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app/data:/app/app/data
+      - ./vectorstore:/app/vectorstore
+    env_file:
+      - .env
+    restart: unless-stopped 
