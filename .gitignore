@@ -28,8 +28,7 @@ env/
 # Environment variables
 .env
 
-# Vector database files
-vectorstore/
+
 
 # IDE files
 .idea/
