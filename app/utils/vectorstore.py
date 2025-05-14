@@ -32,7 +32,9 @@ def load_vectorstore(load_path=VECTOR_DB_PATH):
     try:
         save_file_path = os.path.join(load_path, "faiss_index")
         embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-        vectorstore = FAISS.load_local(save_file_path, embeddings)
+        
+        # Set allow_dangerous_deserialization to True since this is our own data
+        vectorstore = FAISS.load_local(save_file_path, embeddings, allow_dangerous_deserialization=True)
         print(f"Loaded vectorstore from {save_file_path}")
         return vectorstore
     except Exception as e:
