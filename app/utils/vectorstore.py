@@ -48,4 +48,16 @@ def get_relevant_documents(query, vectorstore=None, k=4):
         vectorstore = load_vectorstore()
     
     documents = vectorstore.similarity_search(query, k=k)
+    
+    # Print the chunks for debugging
+    print("\n" + "="*80)
+    print(f"QUERY: {query}")
+    print("="*80)
+    print(f"RETRIEVED {len(documents)} RELEVANT CHUNKS:")
+    for i, doc in enumerate(documents):
+        print(f"\nCHUNK {i+1}:")
+        print(f"Source: {doc.metadata.get('source', 'unknown')}")
+        print(f"Content:\n{doc.page_content[:500]}..." if len(doc.page_content) > 500 else f"Content:\n{doc.page_content}")
+    print("="*80 + "\n")
+    
     return documents 

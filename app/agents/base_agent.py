@@ -58,4 +58,12 @@ class BaseAgent:
     def process(self, query):
         """Process a query using the agent's chain."""
         chain = self.create_chain()
+        
+        # Print the agent that's handling the query
+        print(f"\n{'*'*80}")
+        print(f"AGENT: {self.name}")
+        print(f"QUERY: {query}")
+        print(f"TEMPERATURE: {self.temperature}")
+        print(f"{'*'*80}\n")
+        
         return chain.invoke({"question": query}) 

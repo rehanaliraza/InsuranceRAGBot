@@ -91,6 +91,12 @@ async def query(query_request: QueryRequest):
         docs = get_relevant_documents(query_request.query, vectorstore)
         context = "\n\n".join(doc.page_content for doc in docs)
         
+        # Print consolidated context being sent to LLM
+        print("\n" + "="*80)
+        print("CONSOLIDATED CONTEXT SENT TO LLM:")
+        print(context[:1000] + "..." if len(context) > 1000 else context)
+        print("="*80 + "\n")
+        
         # Format source for citation
         source = docs[0].metadata.get("source", "unknown") if docs else "No relevant documents found"
         

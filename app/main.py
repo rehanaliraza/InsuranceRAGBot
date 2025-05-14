@@ -49,7 +49,16 @@ async def read_root(request: Request):
 async def query(query_request: QueryRequest):
     """Process a query using the appropriate agent."""
     try:
+        # Print the query for debugging
+        print(f"\nProcessing query: {query_request.query}")
+        print(f"Agent specified: {query_request.agent if query_request.agent else 'None (will be auto-selected)'}")
+        
+        # Process the query
         result = mcp.process_query(query_request.query, query_request.agent)
+        
+        # Print the response for debugging
+        print(f"Response from {result['agent']} agent: {result['response'][:100]}..." if len(result['response']) > 100 else f"Response from {result['agent']} agent: {result['response']}")
+        
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

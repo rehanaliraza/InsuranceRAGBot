@@ -28,8 +28,6 @@ env/
 # Environment variables
 .env
 
-
-
 # IDE files
 .idea/
 .vscode/
