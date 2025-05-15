@@ -8,10 +8,13 @@ A multi-agent RAG (Retrieval-Augmented Generation) system for answering insuranc
   - Developer Agent: Technical insurance details
   - Writer Agent: Clear explanations
   - Tester Agent: Fact-checking
+  - Sales Agent: Personalized product recommendations
 - **Master Control Program (MCP)**: Coordinates the agents
 - **Vector Database**: Uses FAISS for efficient similarity search
 - **Web Interface**: Simple chat UI
 - **Model-Context-Protocol Architecture**: Clean separation of concerns for better maintainability
+- **Sales Intelligence**: Identifies sales opportunities and provides personalized recommendations
+- **Conversational Sales Approach**: All agents are trained to include follow-up questions that identify insurance needs
 
 ## Setup
 
@@ -98,6 +101,8 @@ If you encounter issues:
    # Or restart the application
    ```
 
+4. For sales materials, place documents in the `app/data/sales` directory
+
 ## Project Structure
 
 - `app/`: Main application code
@@ -108,6 +113,7 @@ If you encounter issues:
     - `protocol.py`: Prompt templates and output parsing
     - `executor.py`: Integrates models, context, and protocols
   - `data/`: Insurance document files
+    - `sales/`: Sales materials and scenarios
   - `templates/`: HTML templates
   - `static/`: CSS and other static files
   - `utils/`: Utility functions
@@ -165,6 +171,40 @@ The `MCPExecutor` class brings all three components together:
 - **Flexibility**: Easy to add new models, context sources, or prompt templates
 - **Standardization**: Consistent interfaces between components
 - **Extensibility**: New agent types can be added with minimal changes
+
+## Insurance Sales Agent
+
+The Insurance Sales Agent extends the system's capabilities to provide personalized product recommendations:
+
+### Features
+
+- **Consultative Approach**: Provides helpful information first, then identifies sales opportunities
+- **Situation Analysis**: Identifies aspects of the user's situation that indicate specific insurance needs
+- **Follow-up Questions**: Asks relevant questions to better understand the user's situation
+- **Product Recommendations**: Suggests appropriate insurance products based on identified needs
+- **Conversation Transitions**: Smoothly transitions from information to sales exploration
+
+### Sales-Driven Conversation Flow
+
+The system uses multiple techniques to drive insurance sales opportunities:
+
+1. **Universal Follow-up Questions**: Every agent (not just the Sales Agent) is trained to include natural follow-up questions that uncover insurance needs 
+2. **Intelligent Agent Routing**: The system analyzes conversations to identify when to transition to the Sales Agent
+3. **Sales Keyword Detection**: Automatically routes queries with sales-related keywords to the Sales Agent
+4. **Conversation Context Analysis**: Monitors conversation history to identify signals of sales readiness
+5. **Response Post-Processing**: Ensures all responses end with an appropriate follow-up question if one isn't already included
+6. **Progressive Engagement**: After multiple exchanges, increasingly transitions to sales-oriented interactions
+
+### Sales Materials
+
+The system includes specialized sales materials:
+
+- **Product Information**: Detailed descriptions of various insurance products
+- **Customer Scenarios**: Common situations and appropriate product recommendations
+- **Conversation Templates**: Examples of effective transitions from information to sales
+- **Objection Handling**: Strategies for addressing common customer concerns
+
+To add new sales materials, place text files in the `app/data/sales` directory.
 
 ## License
 

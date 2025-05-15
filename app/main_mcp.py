@@ -68,10 +68,44 @@ async def query(query_request: QueryRequest):
             agent_type=query_request.agent
         )
         
+        # Format the agent name for display in the UI
+        if result['agent'] == 'system':
+            # For system responses (like history queries), use a special agent name
+            display_agent = 'System'
+        else:
+            # For regular agent responses, format nicely for display
+            display_agent = result['agent'].capitalize()
+            
         logger.info(f"Query processed successfully by {result['agent']}")
-        return result
+        
+        # Return the properly formatted result
+        return {
+            "agent": display_agent,
+            "response": result['response']
+        }
     except Exception as e:
         logger.error(f"Error processing query: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/sales", response_model=QueryResponse)
+async def sales_query(query_request: QueryRequest):
+    """Process a query specifically using the Sales Agent."""
+    try:
+        logger.info(f"Received sales query: {query_request.query}")
+        
+        # Force the sales agent to be used
+        result = mcp_executor.execute_query(
+            query=query_request.query,
+            agent_type="sales"
+        )
+        
+        logger.info(f"Sales query processed successfully")
+        return {
+            "agent": "Sales",
+            "response": result['response']
+        }
+    except Exception as e:
+        logger.error(f"Error processing sales query: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/review", response_model=ReviewResponse)

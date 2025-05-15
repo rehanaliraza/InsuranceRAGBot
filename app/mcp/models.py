@@ -36,6 +36,13 @@ class ModelProvider:
             openai_api_key=OPENAI_API_KEY
         )
         
+        # Sales model - creative, higher temperature
+        self._models["sales"] = ChatOpenAI(
+            model="gpt-4",
+            temperature=0.7,
+            openai_api_key=OPENAI_API_KEY
+        )
+        
         # Router model - for query classification
         self._models["router"] = ChatOpenAI(
             model="gpt-3.5-turbo",

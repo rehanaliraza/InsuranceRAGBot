@@ -7,9 +7,19 @@ def load_documents(data_dir="app/data"):
     """
     Load documents from the specified directory
     """
-    loader = DirectoryLoader(data_dir, glob="**/*.txt", loader_cls=TextLoader)
-    documents = loader.load()
-    print(f"Loaded {len(documents)} documents")
+    # Load regular insurance documents
+    main_loader = DirectoryLoader(data_dir, glob="**/*.txt", loader_cls=TextLoader)
+    documents = main_loader.load()
+    
+    # Load sales materials if they exist
+    sales_dir = os.path.join(data_dir, "sales")
+    if os.path.exists(sales_dir):
+        sales_loader = DirectoryLoader(sales_dir, glob="**/*.txt", loader_cls=TextLoader)
+        sales_documents = sales_loader.load()
+        documents.extend(sales_documents)
+        print(f"Loaded {len(sales_documents)} sales documents")
+    
+    print(f"Loaded {len(documents)} total documents")
     return documents
 
 def chunk_documents(documents):

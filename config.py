@@ -33,6 +33,11 @@ AGENTS = {
         "name": "Tester Agent",
         "description": "Validates answers against insurance regulations and factual accuracy",
         "temperature": 0.0
+    },
+    "sales": {
+        "name": "Insurance Sales Agent",
+        "description": "Specializes in pitching insurance products tailored to the user's situation",
+        "temperature": 0.7
     }
 }
 

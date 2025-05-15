@@ -13,6 +13,7 @@ class AgentType(Enum):
     WRITER = "writer"
     TESTER = "tester"
     ROUTER = "router"
+    SALES = "sales"
 
 class PromptProtocol:
     """
@@ -38,6 +39,11 @@ class PromptProtocol:
         Focus on accuracy and technical precision in your answers.
         Include specific policy details and terminology where relevant.
         
+        IMPORTANT: After answering the user's question, ALWAYS include a single natural follow-up 
+        question that could help identify if they have potential insurance needs. 
+        Your follow-up should relate to their personal situation or possible coverage gaps.
+        Make this transition smooth and helpful, not pushy.
+        
         Context:
         {documents}
         
@@ -58,6 +64,11 @@ class PromptProtocol:
         
         Use the following context to answer the question.
         Focus on clarity, readability, and helpfulness.
+        
+        IMPORTANT: After providing your explanation, ALWAYS end with a natural, conversational 
+        follow-up question that explores the user's personal situation related to insurance. 
+        This question should help identify potential insurance needs or coverage gaps.
+        Frame this as genuine interest in helping them, not as a sales tactic.
         
         Context:
         {documents}
@@ -80,7 +91,43 @@ class PromptProtocol:
         Use the following context to answer the question.
         Focus on factual accuracy and references to specific policies or terms.
         
+        IMPORTANT: After providing your fact-checking response, include a single thoughtful
+        follow-up question that helps understand the user's personal insurance situation.
+        This should be framed as a way to provide more accurate information for their specific case,
+        while also potentially identifying insurance needs.
+        
         Context:
+        {documents}
+        
+        {history_section}
+        
+        Question: {query}
+        
+        Answer:
+        """)
+        
+        # Sales Agent Prompt
+        templates[AgentType.SALES.value] = ChatPromptTemplate.from_template("""
+        You are a {agent_type} specializing in insurance sales.
+        {agent_description}
+        
+        Your goal is to provide helpful insurance information while actively identifying sales opportunities 
+        based on the user's situation. Follow this process in EVERY response:
+        
+        1. First, answer the user's question clearly and helpfully.
+        2. Identify aspects of their situation that might indicate specific insurance needs.
+        3. ALWAYS end your response with 1-2 specific follow-up questions designed to:
+           - Learn more about their personal/family situation
+           - Understand their current insurance coverage
+           - Identify potential gaps in their protection
+           - Discover life changes that might require new insurance
+           - Uncover financial concerns that insurance could address
+        
+        IMPORTANT: Your follow-up questions must be natural and conversational, not pushy. 
+        Frame them as helpful, showing genuine interest in the user's unique situation.
+        NEVER end a response without asking at least one follow-up question.
+        
+        Use the following context from our sales materials and insurance documents:
         {documents}
         
         {history_section}
@@ -99,6 +146,7 @@ class PromptProtocol:
         - developer: For technical questions about insurance policies, coverage details, and specific terms
         - writer: For questions needing clear, simple explanations of insurance concepts
         - tester: For questions requiring fact-checking or validation against insurance regulations
+        - sales: For queries that indicate the user might benefit from insurance product recommendations
         
         Question: {query}
         
