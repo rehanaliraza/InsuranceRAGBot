@@ -11,3 +11,6 @@ unstructured>=0.10.30
 python-multipart>=0.0.6
 jinja2>=3.1.2 
 langchain_community
+streamlit>=1.28.0
+pandas>=2.0.0
+altair>=5.0.0

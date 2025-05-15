@@ -73,12 +73,18 @@ class ContextManager:
             
         formatted = []
         
+        # Add a clear header for conversation history
+        formatted.append("--- PREVIOUS CONVERSATION ---")
+        
         for item in history:
             if item.get("is_user", False):
                 formatted.append(f"User: {item['content']}")
             else:
                 agent_name = item.get('agent_type', 'Assistant').capitalize()
                 formatted.append(f"{agent_name}: {item['content']}")
+        
+        # Add a clear separator after conversation history
+        formatted.append("--- END OF CONVERSATION HISTORY ---")
             
         return "\n\n".join(formatted)
     
@@ -99,7 +105,10 @@ class ContextManager:
         
         # Add conversation history if requested
         if include_history and self._conversation_history:
-            context["history"] = self.format_history()
+            formatted_history = self.format_history()
+            # Only include history if it's not empty
+            if formatted_history:
+                context["history"] = formatted_history
         
         return context
 

@@ -62,6 +62,22 @@ A multi-agent RAG (Retrieval-Augmented Generation) system for answering insuranc
    python3 run_mcp.py
    ```
 
+### With Metrics Dashboard (Recommended for development)
+1. Run the application with the metrics dashboard:
+   ```
+   # On macOS/Linux:
+   ./run_with_dashboard.sh
+   
+   # On Windows:
+   python run_with_dashboard.py
+   ```
+
+2. This will start:
+   - The main application at `http://localhost:8000`
+   - The metrics dashboard at `http://localhost:8501`
+
+3. Press `Ctrl+C` in the terminal to stop both applications
+
 ## Troubleshooting
 
 If you encounter issues:
@@ -208,4 +224,66 @@ To add new sales materials, place text files in the `app/data/sales` directory.
 
 ## License
 
-[MIT License](LICENSE) 
+[MIT License](LICENSE)
+
+## Metrics Dashboard
+
+The InsuranceRAGBot includes a Streamlit-based metrics dashboard for monitoring system performance:
+
+### Features
+
+- **Real-time Metrics**: Monitor latency, token usage, agent distribution, and retrieval performance
+- **Filtering**: Filter data by date range and agent type
+- **Data Visualization**: Interactive charts for metrics analysis
+- **Auto-refresh**: Option to automatically refresh the dashboard
+- **Time-series Analysis**: View metrics trends over time
+
+### Tracked Metrics
+
+- **Latency**: Response times for different operations (routing, retrieval, LLM generation, etc.)
+- **Token Usage**: Prompt and completion token usage by agent type and model
+- **Agent Distribution**: Frequency of agent type usage
+- **Retrieval Metrics**: Number of documents retrieved and performance
+- **Query Types**: Distribution of different query types (routed, direct, etc.)
+
+### Running the Dashboard
+
+To run the metrics dashboard:
+
+```
+# Make sure your virtual environment is activated
+streamlit run dashboard.py
+```
+
+Then open your browser and navigate to the URL displayed in the terminal (usually `http://localhost:8501`).
+
+### Dashboard Components
+
+1. **System Overview**: Key performance indicators like average response time and total tokens used
+2. **Latency Analysis**: Charts showing response times over time for different operations
+3. **Agent Usage Analysis**: Distribution of agent types and query types
+4. **Token Usage Analysis**: Token consumption by agent type and token type (prompt vs. completion)
+5. **Retrieval Metrics**: Document retrieval statistics and effectiveness
+
+### Managing Metrics Data
+
+The dashboard runs independently from the main application, allowing you to monitor metrics without affecting the bot's performance.
+
+Several utilities are available for managing metrics data:
+
+1. **Cleaning Metrics**: To remove test/fabricated data while preserving real metrics:
+   ```
+   python3 clean_metrics.py
+   ```
+
+2. **Resetting Metrics**: To completely reset all metrics data (with backup):
+   ```
+   python3 reset_metrics.py
+   ```
+
+3. **Generating Test Data**: If you need sample data to test the dashboard:
+   ```
+   python3 generate_test_metrics.py
+   ```
+
+Metrics are automatically collected during normal operation of the bot. The more queries you process through the bot, the more comprehensive the metrics visualizations will become. 

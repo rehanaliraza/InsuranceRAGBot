@@ -1,0 +1,5 @@
+{"timestamp": "2025-05-15T16:04:39.464766", "agent_type": "developer", "prompt_tokens": 981, "completion_tokens": 122, "total_tokens": 1103, "model": "gpt-4", "query_id": "query_f1b9c33a"}
+{"timestamp": "2025-05-15T16:05:02.735286", "agent_type": "writer", "prompt_tokens": 1403, "completion_tokens": 123, "total_tokens": 1526, "model": "gpt-4", "query_id": "query_2f4e0a6e"}
+{"timestamp": "2025-05-15T16:08:00.610927", "agent_type": "developer", "prompt_tokens": 1059, "completion_tokens": 547, "total_tokens": 1606, "model": "gpt-4", "query_id": "query_225f1f75"}
+{"timestamp": "2025-05-15T16:08:20.527079", "agent_type": "writer", "prompt_tokens": 1716, "completion_tokens": 28, "total_tokens": 1744, "model": "gpt-4", "query_id": "query_c11b8600"}
+{"timestamp": "2025-05-15T17:37:10.795894", "agent_type": "sales", "prompt_tokens": 1768, "completion_tokens": 410, "total_tokens": 2178, "model": "gpt-4", "query_id": "query_caee32ef"}

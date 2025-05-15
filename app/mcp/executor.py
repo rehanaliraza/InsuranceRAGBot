@@ -5,8 +5,11 @@ from typing import Dict, Any, Optional, List
 from app.mcp.models import ModelProvider
 from app.mcp.context import ContextManager
 from app.mcp.protocol import PromptProtocol, OutputProtocol, AgentType
+from app.utils.metrics import MetricsTracker
 import logging
 import re
+import time
+import uuid
 
 class MCPExecutor:
     """
@@ -225,11 +228,24 @@ class MCPExecutor:
         """
         Execute a query using the MCP architecture
         """
+        # Generate a unique query ID for tracking metrics
+        query_id = f"query_{uuid.uuid4().hex[:8]}"
+        
+        # Start tracking total latency
+        start_time = time.time()
+        
         # Check if the query is asking about conversation history
         if self.is_history_query(query):
             self.logger.info("Detected history query, providing conversation history")
             history = self.format_user_queries(limit=10)
             response = f"Here are your previous questions:\n\n{history}"
+            
+            # Track latency for system response
+            total_latency = time.time() - start_time
+            MetricsTracker.track_latency("system_response", "system", total_latency, query_id)
+            
+            # Add to conversation history (even for history queries)
+            self.context_manager.add_interaction(query, "system", response)
             
             # Don't append a follow-up question for meta-queries
             return {
@@ -239,12 +255,24 @@ class MCPExecutor:
         
         # Route query if agent_type not specified
         if not agent_type:
+            routing_start = time.time()
             agent_type = self.route_query(query)
+            routing_latency = time.time() - routing_start
+            
+            # Track routing latency
+            MetricsTracker.track_latency("routing", agent_type, routing_latency, query_id)
+            MetricsTracker.track_agent_usage(agent_type, "routed", query_id)
+        else:
+            # Track direct agent usage
+            MetricsTracker.track_agent_usage(agent_type, "direct", query_id)
         
         self.logger.info(f"Executing query with agent type: {agent_type}")
         
         # Get model for agent type
         model = self.model_provider.get_model(agent_type)
+        
+        # Track retrieval metrics and latency
+        retrieval_start = time.time()
         
         # Get context
         context = self.context_manager.get_context_for_agent(
@@ -253,28 +281,82 @@ class MCPExecutor:
             include_history=include_history
         )
         
-        # Get prompt
+        # Track retrieval latency
+        retrieval_latency = time.time() - retrieval_start
+        MetricsTracker.track_latency("retrieval", agent_type, retrieval_latency, query_id)
+        
+        # Track retrieval metrics if documents were retrieved
+        if "documents" in context and context["documents"]:
+            # Count the number of documents by splitting on double newlines
+            doc_count = len(context["documents"].split("\n\n"))
+            MetricsTracker.track_retrieval_metrics(query, doc_count, query_id=query_id)
+        
+        # Get prompt for agent type
         prompt = self.prompt_protocol.get_prompt(agent_type)
         
-        # Format variables
-        variables = self.prompt_protocol.format_prompt_variables(context)
+        # Execute chain
+        llm_start = time.time()
         
-        # Execute query - fix the chaining syntax
-        self.logger.info(f"Running model with {len(variables['documents'])} chars of document context")
+        # Format the variables properly
+        formatted_context = self.prompt_protocol.format_prompt_variables(context)
+        
         chain = prompt | model | self.output_protocol._default_parser
-        response = chain.invoke(variables)
         
-        # Post-process response to ensure it has a follow-up question
-        enhanced_response = self.ensure_follow_up_question(response, agent_type)
+        try:
+            # Use the properly formatted context
+            response = chain.invoke(formatted_context)
+            
+            # Track LLM latency
+            llm_latency = time.time() - llm_start
+            MetricsTracker.track_latency("llm_response", agent_type, llm_latency, query_id)
+            
+            # Estimate token usage (simple estimation)
+            prompt_tokens = len(str(context)) // 3  # Rough estimate: 3 chars per token
+            completion_tokens = len(response) // 3  # Rough estimate
+            
+            # Track token usage
+            model_name = self.model_provider.get_model_name(agent_type)
+            MetricsTracker.track_token_usage(
+                agent_type, 
+                prompt_tokens, 
+                completion_tokens, 
+                model_name,
+                query_id
+            )
+            
+            # Add sales-oriented follow-up questions if needed
+            response = self.ensure_follow_up_question(response, agent_type)
         
-        # Store in context
-        self.context_manager.add_interaction(query, agent_type, enhanced_response)
-        
-        # Return results
-        return {
-            "agent": agent_type,
-            "response": enhanced_response
-        }
+            # IMPORTANT: Add to conversation history BEFORE the next query
+            # This ensures history is available for the next query
+            self.context_manager.add_interaction(query, agent_type, response)
+            
+            # Track total latency
+            total_latency = time.time() - start_time
+            MetricsTracker.track_latency("total", agent_type, total_latency, query_id)
+            
+            return {
+                "agent": agent_type,
+                "response": response,
+                "metrics": {
+                    "query_id": query_id,
+                    "total_latency": total_latency,
+                    "llm_latency": llm_latency,
+                    "retrieval_latency": retrieval_latency
+                }
+            }
+        except Exception as e:
+            self.logger.error(f"Error executing query: {str(e)}", exc_info=True)
+            
+            # Track error
+            error_latency = time.time() - start_time
+            MetricsTracker.track_latency("error", agent_type, error_latency, query_id)
+            
+            # Return error response
+            return {
+                "agent": agent_type,
+                "response": f"I apologize, but I encountered an error while processing your query. Please try again or rephrase your question."
+            }
     
     def execute_with_review(self, query: str) -> Dict[str, Any]:
         """

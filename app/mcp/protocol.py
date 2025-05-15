@@ -175,9 +175,9 @@ class PromptProtocol:
         
         # Add history section if available
         if "history" in context:
-            variables["history_section"] = f"Previous conversation:\n{context['history']}"
+            variables["history_section"] = f"Conversation History:\n{context['history']}"
         else:
-            variables["history_section"] = ""
+            variables["history_section"] = "No previous conversation history available."
             
         return variables
 
