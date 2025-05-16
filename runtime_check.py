@@ -41,7 +41,7 @@ def check_imports():
         return False
     
     try:
-        from langchain_community.vectorstores import FAISS
+        from langchain_community.vectorstores import Chroma
         print("✅ langchain_community.vectorstores imported successfully")
     except ImportError as e:
         print(f"❌ ERROR: Failed to import langchain_community.vectorstores: {e}")

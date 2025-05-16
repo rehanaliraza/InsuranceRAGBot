@@ -1,0 +1,141 @@
+# Health Insurance Information
+
+## Types of Health Insurance Plans
+
+### Health Maintenance Organization (HMO)
+HMO plans typically require you to choose a primary care physician (PCP) who coordinates your care and provides referrals to specialists when needed.
+
+- **Key Features**:
+  - Lower monthly premiums and out-of-pocket costs
+  - Limited network of providers
+  - Referrals required for specialists
+  - Little to no coverage for out-of-network care except emergencies
+
+### Preferred Provider Organization (PPO)
+PPO plans offer more flexibility in choosing healthcare providers without needing referrals.
+
+- **Key Features**:
+  - Larger network of providers
+  - No need for referrals to specialists
+  - Coverage for both in-network and out-of-network care
+  - Higher premiums and out-of-pocket costs
+
+### Exclusive Provider Organization (EPO)
+EPO plans combine features of both HMO and PPO plans.
+
+- **Key Features**:
+  - No need for referrals to specialists
+  - Coverage limited to in-network providers except emergencies
+  - Lower premiums than PPOs, higher than HMOs
+
+### Point of Service (POS)
+POS plans blend HMO and PPO features, requiring a primary care physician but offering more flexibility.
+
+- **Key Features**:
+  - Primary care physician coordinates care
+  - Lower costs for in-network care
+  - Some coverage for out-of-network care
+  - Referrals typically needed for specialists
+
+### High-Deductible Health Plan (HDHP)
+HDHPs feature higher deductibles but lower premiums and are often paired with Health Savings Accounts (HSAs).
+
+- **Key Features**:
+  - Lower monthly premiums
+  - Higher deductibles before insurance begins to pay
+  - Option to pair with tax-advantaged HSA
+  - Good for generally healthy individuals
+
+## Common Health Insurance Terms
+
+### Premiums
+The amount paid for insurance coverage, typically monthly.
+
+### Deductible
+The amount you pay for covered health services before your insurance begins to pay.
+
+### Copayment
+A fixed amount you pay for a covered healthcare service, usually when you receive the service.
+
+### Coinsurance
+The percentage of costs you pay after you've met your deductible.
+
+### Out-of-Pocket Maximum
+The most you have to pay for covered services in a plan year. After reaching this amount, your insurance covers 100% of covered services.
+
+## Common Coverage Components
+
+### Preventive Care
+Most plans cover preventive services like screenings and vaccinations at no cost to you.
+
+- Annual check-ups
+- Vaccinations
+- Cancer screenings
+- Blood pressure and cholesterol tests
+
+### Prescription Drugs
+Coverage for medications varies by plan and typically uses a tiered system.
+
+- **Tier 1**: Generic drugs (lowest cost)
+- **Tier 2**: Preferred brand-name drugs
+- **Tier 3**: Non-preferred brand-name drugs
+- **Tier 4**: Specialty drugs (highest cost)
+
+### Emergency Services
+Coverage for emergency room visits and ambulance services.
+
+### Hospital Care
+Coverage for inpatient services, including room and board, surgery, and other hospital services.
+
+### Mental Health Services
+Coverage for mental health and substance use disorder services, including therapy and inpatient treatment.
+
+## Factors Affecting Health Insurance Premiums
+
+- Age
+- Location
+- Tobacco use
+- Plan category
+- Individual vs. family enrollment
+
+## Special Enrollment Considerations
+
+### Medicare
+Federal health insurance program primarily for people 65 or older.
+
+- **Part A**: Hospital insurance
+- **Part B**: Medical insurance
+- **Part C**: Medicare Advantage plans
+- **Part D**: Prescription drug coverage
+
+### Medicaid
+State-administered health coverage for low-income individuals and families.
+
+### COBRA
+Allows eligible employees and their dependents to continue health coverage after job loss or other qualifying events.
+
+## Ways to Save on Health Insurance
+
+### Health Savings Account (HSA)
+Tax-advantaged savings account available to those enrolled in HDHPs.
+
+- Triple tax advantage: tax-deductible contributions, tax-free growth, tax-free withdrawals for qualified medical expenses
+- Funds roll over year to year
+- Portable if you change employers
+
+### Flexible Spending Account (FSA)
+Tax-advantaged account for healthcare expenses.
+
+- Pre-tax contributions
+- Use-it-or-lose-it rule applies to most funds
+- Employer-sponsored
+
+### Wellness Programs
+Many health plans offer incentives for healthy behaviors.
+
+- Discounts for gym memberships
+- Rewards for completing health assessments
+- Incentives for participating in disease management programs
+
+### Preventive Care
+Taking advantage of free preventive services can help avoid costly treatments later.

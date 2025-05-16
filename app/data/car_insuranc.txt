@@ -1,0 +1,64 @@
+# Car Insurance Information
+
+## Types of Car Insurance Coverage
+
+### Liability Coverage
+Liability coverage helps pay for another person's medical bills or property damage when you're found at fault in an accident. It's legally required in most states.
+
+- **Bodily Injury Liability**: Covers medical expenses for injuries to others in an accident you cause
+- **Property Damage Liability**: Pays for damage to other people's property when you're at fault
+
+### Collision Coverage
+Collision coverage helps pay to repair or replace your vehicle if it's damaged in an accident with another vehicle or object, regardless of who is at fault.
+
+### Comprehensive Coverage
+Comprehensive coverage helps pay to repair or replace your vehicle if it's stolen or damaged by something other than a collision, such as:
+- Theft
+- Vandalism
+- Falling objects
+- Fire
+- Natural disasters
+- Animal damage
+
+### Personal Injury Protection (PIP)
+PIP covers medical expenses for you and your passengers after an accident, regardless of who is at fault. It may also cover:
+- Lost wages
+- Childcare expenses
+- Funeral costs
+
+### Uninsured/Underinsured Motorist Coverage
+This coverage protects you if you're in an accident with a driver who has insufficient or no insurance.
+
+## Factors Affecting Car Insurance Premiums
+
+### Driver-Related Factors
+- Age and gender
+- Driving record and experience
+- Credit score
+- Marital status
+- Address and location
+- Annual mileage
+
+### Vehicle-Related Factors
+- Car make and model
+- Vehicle age
+- Safety features
+- Anti-theft devices
+- Vehicle usage (personal vs. commercial)
+
+## Ways to Save on Car Insurance
+
+### Available Discounts
+- Multi-policy discount
+- Safe driver discount
+- Good student discount
+- Vehicle safety feature discount
+- Paid-in-full discount
+- Paperless billing discount
+- Defensive driving course discount
+
+### Coverage Strategies
+- Choose a higher deductible
+- Review and adjust coverage as your vehicle ages
+- Shop around and compare quotes
+- Consider usage-based insurance programs

@@ -1,5 +1,5 @@
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import Chroma
 from app.utils.document_processor import process_documents
 from config import OPENAI_API_KEY, VECTOR_DB_PATH
 import os
@@ -13,16 +13,25 @@ def create_vectorstore(documents=None, save_path=VECTOR_DB_PATH):
     
     print("Creating embeddings and vectorstore...")
     embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-    vectorstore = FAISS.from_documents(documents, embeddings)
     
     # Create directory if it doesn't exist
     os.makedirs(save_path, exist_ok=True)
     
-    # Save the vectorstore using FAISS's built-in save_local method
-    save_file_path = os.path.join(save_path, "faiss_index")
-    vectorstore.save_local(save_file_path)
+    # Create and persist Chroma vectorstore
+    collection_name = "insurance_docs"
+    persist_directory = os.path.join(save_path, "chroma_db")
     
-    print(f"Vectorstore saved to {save_file_path}")
+    vectorstore = Chroma.from_documents(
+        documents=documents,
+        embedding=embeddings,
+        persist_directory=persist_directory,
+        collection_name=collection_name
+    )
+    
+    # Explicitly persist the vectorstore
+    vectorstore.persist()
+    
+    print(f"Vectorstore saved to {persist_directory}")
     return vectorstore
 
 def load_vectorstore(load_path=VECTOR_DB_PATH):
@@ -30,12 +39,18 @@ def load_vectorstore(load_path=VECTOR_DB_PATH):
     Load a vectorstore from disk
     """
     try:
-        save_file_path = os.path.join(load_path, "faiss_index")
+        persist_directory = os.path.join(load_path, "chroma_db")
+        collection_name = "insurance_docs"
         embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
         
-        # Set allow_dangerous_deserialization to True since this is our own data
-        vectorstore = FAISS.load_local(save_file_path, embeddings, allow_dangerous_deserialization=True)
-        print(f"Loaded vectorstore from {save_file_path}")
+        # Load the persisted Chroma vectorstore
+        vectorstore = Chroma(
+            persist_directory=persist_directory,
+            embedding_function=embeddings,
+            collection_name=collection_name
+        )
+        
+        print(f"Loaded vectorstore from {persist_directory}")
         return vectorstore
     except Exception as e:
         print(f"Vectorstore not found at {load_path} or error loading: {e}")
