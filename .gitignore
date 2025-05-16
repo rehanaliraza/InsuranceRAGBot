@@ -24,6 +24,9 @@ var/
 venv/
 ENV/
 env/
+venv_system/
+venv_new/
+venv_ragbot/
 
 # Environment variables
 .env
@@ -36,6 +39,13 @@ env/
 
 # Logs
 *.log
+
+# Vector databases
+vectorstore/chroma_db/
+vectorstore/faiss_index/
+
+# Metrics data
+metrics/*.jsonl
 
 # OS generated files
 .DS_Store
