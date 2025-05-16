@@ -4,13 +4,14 @@ Insurance RAG Bot - Main application using MCP architecture
 import os
 import logging
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 import uvicorn
 from app.mcp.executor import MCPExecutor
 from app.utils.vectorstore import create_vectorstore, load_vectorstore
+from app.utils.document_converter import save_as_text_file
 from config import API_HOST, API_PORT, APP_VERSION
 
 # Setup logging
@@ -46,6 +47,9 @@ class ReviewResponse(BaseModel):
     primary_agent: str
     response: str
     validation: str
+
+class DocumentConversionRequest(BaseModel):
+    file_path: str  # Path to the document file
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -134,6 +138,47 @@ async def initialize_vectorstore():
         return {"status": "success", "message": "Vectorstore initialized successfully"}
     except Exception as e:
         logger.error(f"Error initializing vectorstore: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/convert-document")
+async def convert_document(conversion_request: DocumentConversionRequest):
+    """Convert a document (PDF, XLSX, CSV) to cleaned text and save it."""
+    try:
+        logger.info(f"Converting document: {conversion_request.file_path}")
+        
+        # Validate file exists
+        if not os.path.isfile(conversion_request.file_path):
+            raise HTTPException(status_code=404, detail=f"File not found: {conversion_request.file_path}")
+            
+        # Get file extension
+        _, ext = os.path.splitext(conversion_request.file_path)
+        ext = ext.lower()
+        
+        # Check supported formats
+        supported_formats = ['.pdf', '.xlsx', '.xls', '.csv']
+        if ext not in supported_formats:
+            raise HTTPException(status_code=400, detail=f"Unsupported file format: {ext}. Supported formats are {', '.join(supported_formats)}")
+        
+        # Use data directory for output
+        output_dir = "app/data"
+        
+        # Convert document to text
+        text_path = save_as_text_file(conversion_request.file_path, output_dir)
+        
+        if text_path:
+            return {
+                "status": "success", 
+                "message": "Document converted successfully", 
+                "text_path": text_path
+            }
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to convert document")
+            
+    except HTTPException as e:
+        # Re-raise HTTP exceptions
+        raise e
+    except Exception as e:
+        logger.error(f"Error converting document: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/health")

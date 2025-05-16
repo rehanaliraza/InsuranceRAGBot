@@ -119,6 +119,121 @@ If you encounter issues:
 
 4. For sales materials, place documents in the `app/data/sales` directory
 
+### PDF, Excel, and CSV Support
+
+The system now supports converting PDF, Excel (XLSX), and CSV files to text format:
+
+1. Use the document helper tool:
+   ```
+   # Convert a document
+   ./document_helper.py convert path/to/your/document.pdf
+   
+   # List all documents in the system
+   ./document_helper.py list
+   
+   # Reinitialize the vectorstore
+   ./document_helper.py initialize
+   ```
+
+2. Or use the API endpoint directly:
+   ```
+   # Convert a document via API
+   curl -X POST http://localhost:8000/api/convert-document \
+     -H "Content-Type: application/json" \
+     -d '{"file_path": "path/to/your/document.pdf"}'
+   
+   # Then initialize the vectorstore
+   curl -X POST http://localhost:8000/api/initialize
+   ```
+
+The conversion process automatically:
+- Extracts text from the document
+- Cleans and filters content to focus on insurance-relevant information
+- Saves the processed text in the app/data directory
+- Updates the vectorstore with the new content
+
+## Knowledge Base Management
+
+The knowledge base is the foundation of the RAG system, containing all documents used for answering queries.
+
+### What is the Knowledge Base?
+
+The knowledge base consists of:
+1. **Text Documents**: Stored in the `app/data` directory
+2. **Vector Embeddings**: Generated from these documents and stored in the `vectorstore` directory
+3. **Retrieval System**: The mechanism that finds relevant information based on user queries
+
+### Adding New Documents to the Knowledge Base
+
+There are three ways to add new documents:
+
+#### Method 1: Using the document_helper.py tool (Recommended)
+
+1. Ensure the document_helper.py is executable:
+   ```
+   chmod +x document_helper.py
+   ```
+
+2. Run the conversion command:
+   ```
+   ./document_helper.py convert /path/to/your/document.pdf
+   ```
+   
+3. The tool will:
+   - Extract and clean the document content
+   - Save it as a text file in app/data
+   - Automatically update the vectorstore
+
+#### Method 2: Using the API
+
+1. Start the server if not already running:
+   ```
+   python run_mcp.py
+   ```
+
+2. Send a POST request to convert the document:
+   ```
+   curl -X POST http://localhost:8000/api/convert-document \
+     -H "Content-Type: application/json" \
+     -d '{"file_path": "/path/to/your/document.pdf"}'
+   ```
+
+#### Method 3: Manual Addition
+
+1. Create or place a text file in the `app/data` directory
+2. Run the initialization script to update the vectorstore:
+   ```
+   python init_vectorstore.py
+   ```
+   
+   Or use the API endpoint:
+   ```
+   curl -X POST http://localhost:8000/api/initialize
+   ```
+
+### Supported File Types
+
+- **PDF Documents** (.pdf)
+- **Excel Spreadsheets** (.xlsx, .xls)
+- **CSV Files** (.csv)
+- **Plain Text Files** (.txt)
+
+### Verifying Document Addition
+
+To verify your document was added to the knowledge base:
+
+1. List all documents in the system:
+   ```
+   ./document_helper.py list
+   ```
+
+2. Test the bot with a question related to the new document content
+   ```
+   curl -X POST http://localhost:8000/api/query \
+     -H "Content-Type: application/json" \
+     -d '{"query": "Tell me about [topic from your new document]"}'
+   ```
+
 ## Project Structure
 
 - `app/`: Main application code
@@ -286,4 +401,4 @@ Several utilities are available for managing metrics data:
    python3 generate_test_metrics.py
    ```
 
-Metrics are automatically collected during normal operation of the bot. The more queries you process through the bot, the more comprehensive the metrics visualizations will become. 
+Metrics are automatically collected during normal operation of the bot. The more queries you process through the bot, the more comprehensive the metrics visualizations will become.
