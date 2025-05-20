@@ -7,9 +7,30 @@ def load_documents(data_dir="app/data"):
     """
     Load documents from the specified directory
     """
-    # Load regular insurance documents
-    main_loader = DirectoryLoader(data_dir, glob="**/*.txt", loader_cls=TextLoader)
-    documents = main_loader.load()
+    # Load documents from the processed_txt directory for UnleashX content
+    processed_txt_dir = os.path.join(data_dir, "processed_txt")
+    if os.path.exists(processed_txt_dir):
+        processed_loader = DirectoryLoader(processed_txt_dir, glob="**/*.txt", loader_cls=TextLoader)
+        documents = processed_loader.load()
+        print(f"Loaded {len(documents)} processed text documents from {processed_txt_dir}")
+    else:
+        documents = []
+    
+    # Load other text files from the data directory that aren't in processed_txt
+    for root, dirs, files in os.walk(data_dir):
+        # Skip the processed_txt directory since we already loaded it
+        if "processed_txt" in root:
+            continue
+            
+        txt_files = [f for f in files if f.endswith('.txt')]
+        for txt_file in txt_files:
+            file_path = os.path.join(root, txt_file)
+            try:
+                loader = TextLoader(file_path)
+                file_docs = loader.load()
+                documents.extend(file_docs)
+            except Exception as e:
+                print(f"Error loading {file_path}: {e}")
     
     # Load sales materials if they exist
     sales_dir = os.path.join(data_dir, "sales")

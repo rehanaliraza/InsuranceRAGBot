@@ -1,0 +1,139 @@
+{
+    "error": false,
+    "code": 200,
+    "message": "",
+    "timestamp": 1747730469720,
+    "data": {
+        "agent_id": 93,
+        "agent_name": "My Test Agent",
+        "description": "Voice Agent",
+        "model": "GPT-3.5",
+        "version": "3.5.1",
+        "voice": "Nova",
+        "prompt": "Hey, you are voice agent ",
+        "agent_type": "Voice",
+        "agent_behaviour": {
+            "tone": "Unknown",
+            "style": "Unknown",
+            "instruction_sensitivity": "Unknown"
+        },
+        "knowledge_files": [
+            {
+                "id": 1,
+                "name": "aspire_ss",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/aspiress_1746607146557_0.020394498685820883.pdf",
+                "trained": false
+            },
+            {
+                "id": 2,
+                "name": "care-supreme---brochure",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/caresupremebrochure_1746607150124_0.9055864156750248.pdf",
+                "trained": false
+            },
+            {
+                "id": 3,
+                "name": "Elevate One Pager Final (1) (1)",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/ElevateOnePagerFinal11_1746607150979_0.4816017215816015.pdf",
+                "trained": false
+            },
+            {
+                "id": 4,
+                "name": "Health infinity",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/Healthinfinity_1746607151849_0.6639602432983391.pdf",
+                "trained": false
+            },
+            {
+                "id": 5,
+                "name": "medicare_premier_brochure",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/medicarepremierbrochure_1746607152660_0.8801303151474071.pdf",
+                "trained": false
+            },
+            {
+                "id": 6,
+                "name": "optima-secure-brochure (1)",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/optimasecurebrochure1_1746607153403_0.06938282838793564.pdf",
+                "trained": false
+            },
+            {
+                "id": 7,
+                "name": "PCOM SHEET",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/PCOMSHEET_1746607154282_0.33469827717200795.xlsx",
+                "trained": false
+            },
+            {
+                "id": 8,
+                "name": "ReAssure 2.0 - SS",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/ReAssure2_1746607154869_0.8535623098413714.pdf",
+                "trained": false
+            },
+            {
+                "id": 9,
+                "name": "Star Health Assure_One pager_Version 1.0_Nov_22",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/StarHealthAssureOnepagerVersion1_1746607155976_0.960567054706595.pdf",
+                "trained": false
+            },
+            {
+                "id": 33,
+                "name": "medicare_premier_brochure (1)",
+                "url": "https://d-unlsx.s3.ap-south-1.amazonaws.com/98/agent/knowledge_base/93/medicarepremierbrochure1_1746688281695_0.2249216867824939.pdf",
+                "trained": false
+            }
+        ],
+        "knowledge_links": [
+            {
+                "id": 34,
+                "name": "Link Knowledge Base",
+                "url": "www.google.com",
+                "trained": false
+            }
+        ],
+        "knowledge_pages": [
+            {
+                "id": 35,
+                "name": "Testing  Page",
+                "trained": false,
+                "html": null
+            }
+        ],
+        "abilities": {
+            "context_awareness": {
+                "enabled": true,
+                "description": null
+            },
+            "memory_recall": {
+                "enabled": false,
+                "description": null
+            },
+            "escalation_handling": {
+                "enabled": true,
+                "description": null,
+                "channel": null
+            },
+            "multi_turn_reasoning": {
+                "enabled": true,
+                "description": null
+            },
+            "persona_emulation": {
+                "enabled": true,
+                "description": null,
+                "personality": "2"
+            },
+            "intent_disambiguation": {
+                "enabled": true,
+                "description": null
+            }
+        },
+        "advanced": {
+            "temperature": 0,
+            "retry_logic": true,
+            "retry_attempts": 10,
+            "access_control": 1,
+            "access_control_list": 2,
+            "tts_model": 1,
+            "stt_model": 2
+        },
+        "trained": "NO",
+        "tts_model": "11labs",
+        "stt_model": "Deepgram"
+    }
+}

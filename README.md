@@ -402,3 +402,32 @@ Several utilities are available for managing metrics data:
    ```
 
 Metrics are automatically collected during normal operation of the bot. The more queries you process through the bot, the more comprehensive the metrics visualizations will become.
+
+## TryUnleashX Integration
+
+The InsuranceRAGBot includes integration with the TryUnleashX platform for knowledge management:
+
+### Features
+
+- **Knowledge Sync**: Automatically fetch and incorporate knowledge from TryUnleashX
+- **Multiple Content Types**: Support for files (PDF, XLSX, CSV), web links, and HTML pages
+- **Content Processing**: Intelligent extraction and filtering of insurance-relevant content
+- **Command-Line Tool**: Dedicated tool for syncing knowledge from TryUnleashX
+
+### Using the Integration
+
+1. **API Endpoint**: Use the `/api/sync-unleashx` endpoint to sync knowledge from TryUnleashX
+   ```
+   POST /api/sync-unleashx
+   {
+     "token": "your-unleashx-api-token",
+     "agent_id": 123
+   }
+   ```
+
+2. **Command-Line Tool**: Use the `sync_unleashx.py` script for direct syncing
+   ```
+   python sync_unleashx.py --agent_id 123 --token your-unleashx-api-token
+   ```
+
+For detailed documentation, see [UNLEASHX_SYNC_README.md](UNLEASHX_SYNC_README.md).

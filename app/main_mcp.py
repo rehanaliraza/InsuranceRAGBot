@@ -2,7 +2,13 @@
 Insurance RAG Bot - Main application using MCP architecture
 """
 import os
+import sys
 import logging
+import time
+
+# Add the project root to the Python path
+sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -12,6 +18,7 @@ import uvicorn
 from app.mcp.executor import MCPExecutor
 from app.utils.vectorstore import create_vectorstore, load_vectorstore
 from app.utils.document_converter import save_as_text_file
+from app.utils.unleashx_sync import sync_knowledge_base
 from config import API_HOST, API_PORT, APP_VERSION
 
 # Setup logging
@@ -47,6 +54,21 @@ class ReviewResponse(BaseModel):
     primary_agent: str
     response: str
     validation: str
+
+class DocumentConversionRequest(BaseModel):
+    file_path: str  # Path to the document file
+    
+class UnleashXSyncRequest(BaseModel):
+    token: str
+    agent_id: int
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "token": "your-unleashx-api-token",
+                "agent_id": 123
+            }
+        }
 
 class DocumentConversionRequest(BaseModel):
     file_path: str  # Path to the document file
@@ -185,6 +207,68 @@ async def convert_document(conversion_request: DocumentConversionRequest):
 async def health_check():
     """Simple health check endpoint"""
     return {"status": "ok", "version": APP_VERSION, "architecture": "MCP"}
+
+@app.post("/api/sync-unleashx")
+async def sync_unleashx(sync_request: UnleashXSyncRequest):
+    """
+    Sync knowledge base from TryUnleashX API
+    
+    This endpoint:
+    1. Calls the TryUnleashX API to get knowledge files, links, and pages
+    2. Downloads and processes all content
+    3. Updates the vectorstore with the new knowledge
+    """
+    try:
+        logger.info(f"Syncing knowledge base from UnleashX for agent ID: {sync_request.agent_id}")
+        
+        # Validate inputs
+        if not sync_request.token:
+            raise HTTPException(status_code=400, detail="API token is required")
+            
+        if not sync_request.agent_id:
+            raise HTTPException(status_code=400, detail="Agent ID is required")
+        
+        # Sync knowledge base
+        result = sync_knowledge_base(sync_request.token, sync_request.agent_id)
+        
+        if result.get("status") == "error":
+            logger.error(f"Error syncing knowledge base: {result.get('message')}")
+            raise HTTPException(status_code=500, detail=result.get("message"))
+            
+        # Check if any files were processed
+        if result.get("processed_files", 0) == 0:
+            logger.warning("No files were processed during sync")
+            return {
+                "status": "warning",
+                "message": "Knowledge base sync completed, but no files were processed",
+                "summary": result
+            }
+            
+        # Initialize vectorstore to include the new files
+        logger.info("Initializing vectorstore with new knowledge...")
+        start_time = time.time()
+        vectorstore = create_vectorstore()
+        mcp_executor.context_manager._vectorstore = vectorstore
+        vectorstore_time = time.time() - start_time
+        
+        logger.info(f"Knowledge base sync completed successfully in {result.get('processing_time_seconds', 0) + vectorstore_time:.2f} seconds")
+        
+        # Return summary with vectorstore info
+        return {
+            "status": "success",
+            "message": "Knowledge base synced successfully",
+            "summary": {
+                **result,
+                "vectorstore_time_seconds": round(vectorstore_time, 2),
+                "total_time_seconds": round(result.get("processing_time_seconds", 0) + vectorstore_time, 2)
+            }
+        }
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        logger.error(f"Error syncing knowledge base: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     # Check if vectorstore exists, if not create it
