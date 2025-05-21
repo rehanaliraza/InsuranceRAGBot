@@ -4,7 +4,7 @@ import json
 def test_query_endpoint():
     url = "http://localhost:8000/api/query"
     payload = {
-        "query": "What is health insurance?"
+        "query": "What are the key elements of effective documentation?"
     }
     headers = {
         "Content-Type": "application/json"
@@ -25,7 +25,7 @@ def test_query_endpoint():
 def test_review_endpoint():
     url = "http://localhost:8000/api/review"
     payload = {
-        "query": "What is covered by auto insurance?"
+        "query": "What are the benefits of knowledge management?"
     }
     headers = {
         "Content-Type": "application/json"

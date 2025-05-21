@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simplified version of the Insurance RAG Bot that focuses on just loading documents
+Simplified version of the General-Purpose RAG Bot that focuses on just loading documents
 and providing basic API functionality without agent complexity
 """
 import os
@@ -24,8 +24,8 @@ from config import API_HOST, API_PORT, APP_VERSION
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Insurance RAG Bot (Simple)",
-    description="A simplified RAG system for insurance questions",
+    title="General-Purpose RAG Bot (Simple)",
+    description="A simplified RAG system for general knowledge questions",
     version=APP_VERSION
 )
 
@@ -102,7 +102,7 @@ async def query(query_request: QueryRequest):
         
         # Create prompt
         prompt = ChatPromptTemplate.from_template("""
-        You are an insurance assistant. Use the following context to answer the question.
+        You are a helpful knowledge assistant. Use the following context to answer the question.
         
         Context:
         {context}

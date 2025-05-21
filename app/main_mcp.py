@@ -1,5 +1,5 @@
 """
-Insurance RAG Bot - Main application using MCP architecture
+General-Purpose RAG Bot - Main application using MCP architecture
 """
 import os
 import sys
@@ -30,7 +30,7 @@ logger = logging.getLogger("main_mcp")
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Insurance RAG Bot (MCP)",
+    title="General-Purpose RAG Bot (MCP)",
     description="A multi-agent RAG system using Model-Context-Protocol architecture",
     version=APP_VERSION
 )

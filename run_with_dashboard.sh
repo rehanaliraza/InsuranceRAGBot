@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Run the InsuranceRAGBot with Metrics Dashboard
+# Run the General-Purpose RAG Bot with Metrics Dashboard
 
 # Create metrics directory if it doesn't exist
 mkdir -p metrics
 
-echo "Starting InsuranceRAGBot..."
+echo "Starting General-Purpose RAG Bot..."
 # Run the main application in the background
 python run_mcp.py &
 APP_PID=$!

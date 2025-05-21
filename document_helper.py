@@ -2,7 +2,7 @@
 """
 Script to demonstrate how to use the document conversion functionality.
 This script provides an easy way for users to convert PDF, XLSX, and CSV files
-to cleaned text files that can be used by the InsuranceRAGBot.
+to cleaned text files that can be used by the General-Purpose RAG Bot.
 """
 import os
 import sys
@@ -21,16 +21,16 @@ if os.path.abspath(os.path.dirname(__file__)) not in sys.path:
 
 def show_welcome():
     """Display a welcome message with instructions."""
-    welcome_text = """# Document Conversion Tool for InsuranceRAGBot
+    welcome_text = """# Document Conversion Tool for General-Purpose RAG Bot
 
-This tool helps you add PDF, Excel, and CSV files to your InsuranceRAGBot knowledge base.
+This tool helps you add PDF, Excel, and CSV files to your General-Purpose RAG Bot knowledge base.
 
 ## How It Works
 1. Place your document files in any location
 2. Run this tool with the path to your file
 3. The tool will:
    - Extract text from your document
-   - Clean the content to focus on insurance-related information
+   - Clean the content to focus on relevant information
    - Save a processed text file to app/data
    - Update the vectorstore with the new content
 
@@ -47,7 +47,7 @@ def show_examples():
     """Display example commands."""
     console.print("Example commands:", style="bold cyan")
     examples = [
-        "./document_helper.py convert path/to/your/insurance_policy.pdf",
+        "./document_helper.py convert path/to/your/document.pdf",
         "./document_helper.py convert path/to/your/rates.xlsx",
         "./document_helper.py convert path/to/your/customer_data.csv",
         "./document_helper.py list",
@@ -135,7 +135,7 @@ def initialize_vectorstore():
             return False
 
 def main():
-    parser = argparse.ArgumentParser(description="InsuranceRAGBot Document Helper")
+    parser = argparse.ArgumentParser(description="General-Purpose RAG Bot Document Helper")
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
     
     # Convert command

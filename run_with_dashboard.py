@@ -1,5 +1,5 @@
 """
-Run InsuranceRAGBot with Metrics Dashboard - Python launcher
+Run General-Purpose RAG Bot with Metrics Dashboard - Python launcher
 Windows-compatible alternative to run_with_dashboard.sh
 """
 import os
@@ -36,7 +36,7 @@ atexit.register(cleanup)
 
 try:
     # Start the main application
-    print("Starting InsuranceRAGBot...")
+    print("Starting General-Purpose RAG Bot...")
     
     if sys.platform == 'win32':
         app_process = subprocess.Popen([sys.executable, "run_mcp.py"], 

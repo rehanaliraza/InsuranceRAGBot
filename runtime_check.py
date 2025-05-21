@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Runtime check script to verify that the Insurance RAG Bot environment is set up correctly
+Runtime check script to verify that the General-Purpose RAG Bot environment is set up correctly
 """
 import os
 import sys
@@ -126,7 +126,7 @@ def run_simple_query():
     
     try:
         from app.utils.vectorstore import get_relevant_documents
-        docs = get_relevant_documents("What is health insurance?")
+        docs = get_relevant_documents("What are the benefits of good documentation?")
         print(f"✅ Query returned {len(docs)} relevant documents")
         return True
     except Exception as e:
@@ -136,7 +136,7 @@ def run_simple_query():
 
 def main():
     """Run all checks"""
-    print("=== INSURANCE RAG BOT RUNTIME CHECK ===\n")
+    print("=== GENERAL-PURPOSE RAG BOT RUNTIME CHECK ===\n")
     
     checks = [
         check_env_vars,

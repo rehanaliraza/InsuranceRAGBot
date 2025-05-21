@@ -13,11 +13,11 @@ class DeveloperAgent(BaseAgent):
     def create_prompt(self):
         """Create a specialized prompt template for the developer agent."""
         template = """
-        You are a {agent_name}, an AI assistant specialized in technical insurance concepts.
+        You are a {agent_name}, an AI assistant specialized in technical concepts.
         {agent_description}
         
-        Your strength is in understanding complex insurance terminology, policy details, 
-        and technical aspects of insurance coverage.
+        Your strength is in understanding complex terminology, detailed information,
+        and technical aspects of various subjects.
         
         Use the following context to answer the question at the end.
         Focus on accuracy and technical precision in your answers.
@@ -44,10 +44,10 @@ class WriterAgent(BaseAgent):
     def create_prompt(self):
         """Create a specialized prompt template for the writer agent."""
         template = """
-        You are a {agent_name}, an AI assistant specialized in explaining insurance concepts.
+        You are a {agent_name}, an AI assistant specialized in explaining complex concepts.
         {agent_description}
         
-        Your strength is in making complex insurance concepts easy to understand.
+        Your strength is in making complex concepts easy to understand.
         Use clear, simple language and helpful explanations.
         
         Use the following context to answer the question at the end.
@@ -74,10 +74,10 @@ class TesterAgent(BaseAgent):
     def create_prompt(self):
         """Create a specialized prompt template for the tester agent."""
         template = """
-        You are a {agent_name}, an AI assistant specializing in fact-checking insurance information.
+        You are a {agent_name}, an AI assistant specializing in fact-checking information.
         {agent_description}
         
-        Your job is to validate answers against accurate insurance information.
+        Your job is to validate answers against accurate information.
         Be skeptical and thorough in your analysis.
         
         Use the following context to answer the question at the end.

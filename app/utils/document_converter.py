@@ -1,5 +1,5 @@
 """
-Document converter module for the Insurance RAG Bot.
+Document converter module for the General-Purpose RAG Bot.
 This module handles the conversion of different document formats (PDF, XLSX, CSV)
 to cleaned text that can be processed by the document processor.
 """
@@ -12,54 +12,65 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from typing import List, Optional, Dict, Any
 
-# Insurance-specific terms to keep even if they are stopwords
-INSURANCE_TERMS = {
-    'policy', 'premium', 'coverage', 'claim', 'deductible', 'insurance',
-    'liability', 'benefits', 'health', 'auto', 'life', 'medical', 'accident',
-    'risk', 'term', 'whole', 'disability', 'comprehensive', 'collision',
-    'home', 'homeowners', 'property', 'damage', 'injury', 'protection',
-    'underinsured', 'uninsured', 'flood', 'earthquake', 'fire', 'theft',
-    'policyholder', 'beneficiary', 'insurer', 'provider', 'agent', 'broker'
+# Common domain-specific terms to keep even if they are stopwords
+DOMAIN_TERMS = {
+    'about', 'above', 'across', 'after', 'against', 'along', 'among', 
+    'around', 'at', 'before', 'behind', 'below', 'beneath', 'beside', 
+    'between', 'beyond', 'but', 'by', 'despite', 'down', 'during', 
+    'except', 'for', 'from', 'in', 'inside', 'into', 'like', 'near',
+    'of', 'off', 'on', 'onto', 'out', 'outside', 'over', 'past',
+    'since', 'through', 'throughout', 'to', 'toward', 'under', 'underneath',
+    'until', 'up', 'upon', 'with', 'within', 'without'
 }
 
-# Load stopwords but remove insurance-specific terms
-STOPWORDS = set(stopwords.words('english')) - INSURANCE_TERMS
+# Load stopwords but keep important domain terms
+STOPWORDS = set(stopwords.words('english')) - DOMAIN_TERMS
 
 class DocumentCleaner:
-    """Class for cleaning and filtering text to keep insurance-relevant content."""
+    """Class for cleaning and filtering text to keep relevant content."""
     
     def __init__(self):
         """Initialize the document cleaner."""
-        self.insurance_patterns = [
-            r'\b(insurance|policy|coverage|premium|deductible|claim)\b',
-            r'\b(health|auto|life|home|property)\s+insurance\b',
-            r'\b(liability|comprehensive|collision)\s+coverage\b',
-            r'\b(medical|accident|disability)\s+benefits\b',
-            r'\bpolicyholder\b',
-            r'\binsurer\b',
-            r'\bbeneficiary\b',
-            r'\brisk\s+assessment\b',
-            r'\bpremium\s+payments?\b',
-            r'\bclaim\s+process\b',
-            r'\binsurance\s+(agent|provider|company|policy|plan)\b',
+        # Content quality patterns - looking for well-structured content
+        self.content_patterns = [
+            r'\b(section|chapter|part|introduction|conclusion)\b',
+            r'\b(figure|table|chart|graph|diagram)\b',
+            r'\b(example|definition|summary|overview)\b',
+            r'\b(important|note|key|main|critical)\b',
+            r'^\d+\.\s.*',  # Numbered lists
+            r'^\*\s.*',     # Bullet points
+            r'^-\s.*',      # Dash bullet points
+            r'\b[A-Z][a-z]+\s[A-Z][a-z]+\b',  # Proper nouns
+            r'\b\d+(\.\d+)?%\b',  # Percentages
+            r'\$\d+(\.\d+)?\b',   # Dollar amounts
         ]
-        self.compiled_patterns = [re.compile(pattern, re.IGNORECASE) for pattern in self.insurance_patterns]
+        self.compiled_patterns = [re.compile(pattern, re.IGNORECASE) for pattern in self.content_patterns]
     
-    def is_insurance_relevant(self, text: str) -> bool:
+    def is_relevant_content(self, text: str) -> bool:
         """
-        Check if a piece of text contains insurance-related content.
+        Check if a piece of text contains meaningful content.
         
         Args:
             text: The text to check
             
         Returns:
-            bool: True if the text is relevant to insurance, False otherwise
+            bool: True if the text contains meaningful content, False otherwise
         """
-        # Check if any insurance pattern is in the text
+        # Very short texts are unlikely to be meaningful
+        if len(text.strip()) < 15:
+            return False
+            
+        # Text with multiple sentences is usually meaningful
+        if text.count('.') >= 2:
+            return True
+            
+        # Check for content quality patterns
         for pattern in self.compiled_patterns:
             if pattern.search(text):
                 return True
-        return False
+                
+        # Default to keeping content unless very short
+        return len(text.strip()) > 50
     
     def clean_text(self, text: str) -> str:
         """
@@ -85,7 +96,7 @@ class DocumentCleaner:
     
     def filter_paragraphs(self, paragraphs: List[str]) -> List[str]:
         """
-        Filter paragraphs to keep only those relevant to insurance.
+        Filter paragraphs to keep only those containing meaningful content.
         
         Args:
             paragraphs: List of paragraphs to filter
@@ -93,17 +104,17 @@ class DocumentCleaner:
         Returns:
             List[str]: Filtered list of paragraphs
         """
-        return [p for p in paragraphs if p and self.is_insurance_relevant(p)]
+        return [p for p in paragraphs if p and self.is_relevant_content(p)]
     
     def process_text(self, text: str) -> str:
         """
-        Process a text document to clean it and filter for insurance relevance.
+        Process a text document to clean it and filter for relevant content.
         
         Args:
             text: The text to process
             
         Returns:
-            str: The processed text with only insurance-relevant content
+            str: The processed text with meaningful content
         """
         # Clean the text
         cleaned_text = self.clean_text(text)
@@ -111,7 +122,7 @@ class DocumentCleaner:
         # Split into paragraphs
         paragraphs = cleaned_text.split('\n\n')
         
-        # Filter paragraphs for insurance relevance
+        # Filter paragraphs for meaningful content
         relevant_paragraphs = self.filter_paragraphs(paragraphs)
         
         # Join the relevant paragraphs back together
@@ -120,7 +131,7 @@ class DocumentCleaner:
         else:
             # If no relevant paragraphs were found, check if the whole document might be relevant
             # This handles cases where the formatting doesn't have clear paragraph breaks
-            if self.is_insurance_relevant(cleaned_text):
+            if len(cleaned_text.strip()) > 100:  # Basic check for minimum meaningful content
                 return cleaned_text
             return ""
 
@@ -203,8 +214,8 @@ class ExcelConverter:
                 # Convert each row to text
                 for _, row in df.iterrows():
                     row_text = " | ".join(str(val) for val in row.values)
-                    # Check if this row has insurance-relevant content
-                    if self.cleaner.is_insurance_relevant(row_text):
+                    # Check if this row has meaningful content
+                    if self.cleaner.is_relevant_content(row_text):
                         all_text.append(row_text)
             
             # Join all text
@@ -252,8 +263,8 @@ class CSVConverter:
             # Convert each row to text
             for _, row in df.iterrows():
                 row_text = " | ".join(str(val) for val in row.values)
-                # Check if this row has insurance-relevant content
-                if self.cleaner.is_insurance_relevant(row_text):
+                # Check if this row has meaningful content
+                if self.cleaner.is_relevant_content(row_text):
                     all_text.append(row_text)
             
             # Join all text

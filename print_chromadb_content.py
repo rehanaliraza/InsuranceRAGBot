@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script to print all content from the ChromaDB vectorstore
+Script to print all content from the General-Purpose RAG Bot's ChromaDB vectorstore
 """
 import os
 import sys
@@ -13,7 +13,7 @@ def print_chroma_content():
     try:
         # Set up ChromaDB
         persist_directory = os.path.join(VECTOR_DB_PATH, "chroma_db")
-        collection_name = "insurance_docs"
+        collection_name = "knowledge_docs"
         embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
         
         # Load the vectorstore

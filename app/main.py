@@ -11,8 +11,8 @@ from config import API_HOST, API_PORT, APP_VERSION
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Insurance RAG Bot",
-    description="A multi-agent RAG system for answering insurance questions",
+    title="General-Purpose RAG Bot",
+    description="A multi-agent RAG system for answering general knowledge questions",
     version=APP_VERSION
 )
 

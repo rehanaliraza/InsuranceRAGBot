@@ -21,23 +21,18 @@ CHUNK_OVERLAP = 200
 AGENTS = {
     "developer": {
         "name": "Developer Agent",
-        "description": "Specializes in technical insurance concepts and policy details",
+        "description": "Specializes in technical concepts and detailed explanations",
         "temperature": 0.2
     },
     "writer": {
         "name": "Writer Agent",
-        "description": "Specializes in clear, concise explanations of insurance concepts",
+        "description": "Specializes in clear, concise explanations of complex concepts",
         "temperature": 0.5
     },
     "tester": {
         "name": "Tester Agent",
-        "description": "Validates answers against insurance regulations and factual accuracy",
+        "description": "Validates answers for factual accuracy and correctness",
         "temperature": 0.0
-    },
-    "sales": {
-        "name": "Insurance Sales Agent",
-        "description": "Specializes in pitching insurance products tailored to the user's situation",
-        "temperature": 0.7
     }
 }
 

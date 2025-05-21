@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Starter script for Insurance RAG Bot that handles Python path issues
+Starter script for General-Purpose RAG Bot that handles Python path issues
 """
 import os
 import sys

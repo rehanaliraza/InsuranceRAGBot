@@ -290,22 +290,17 @@ def process_html_content(html_content: str) -> str:
         for element in soup(['script', 'style', 'header', 'footer', 'nav', 'iframe', 'noscript']):
             element.extract()
             
-        # Look for insurance-specific terms to highlight sections
-        insurance_terms = [
-            "insurance", "policy", "coverage", "premium", "deductible", 
-            "claim", "health", "life", "auto", "home", "liability"
-        ]
-        
-        # Try to find paragraphs with insurance terms
-        insurance_paragraphs = []
+        # Look for quality content markers (paragraphs with substance)
+        quality_paragraphs = []
         for p in soup.find_all(['p', 'div', 'section', 'article']):
             text = p.get_text().strip()
-            if text and any(term in text.lower() for term in insurance_terms):
-                insurance_paragraphs.append(text)
+            # Keep paragraphs with meaningful content (non-empty, more than just a few words)
+            if text and len(text) > 40:
+                quality_paragraphs.append(text)
                 
-        if insurance_paragraphs:
-            # If we found insurance-specific paragraphs, use those
-            text = "\n\n".join(insurance_paragraphs)
+        if quality_paragraphs:
+            # If we found quality paragraphs, use those
+            text = "\n\n".join(quality_paragraphs)
         else:
             # Otherwise, use all text
             text = soup.get_text()

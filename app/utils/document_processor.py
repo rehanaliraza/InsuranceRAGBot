@@ -32,13 +32,13 @@ def load_documents(data_dir="app/data"):
             except Exception as e:
                 print(f"Error loading {file_path}: {e}")
     
-    # Load sales materials if they exist
-    sales_dir = os.path.join(data_dir, "sales")
-    if os.path.exists(sales_dir):
-        sales_loader = DirectoryLoader(sales_dir, glob="**/*.txt", loader_cls=TextLoader)
-        sales_documents = sales_loader.load()
-        documents.extend(sales_documents)
-        print(f"Loaded {len(sales_documents)} sales documents")
+    # Load additional materials if they exist
+    additional_dir = os.path.join(data_dir, "additional")
+    if os.path.exists(additional_dir):
+        additional_loader = DirectoryLoader(additional_dir, glob="**/*.txt", loader_cls=TextLoader)
+        additional_documents = additional_loader.load()
+        documents.extend(additional_documents)
+        print(f"Loaded {len(additional_documents)} additional documents")
     
     print(f"Loaded {len(documents)} total documents")
     return documents

@@ -1,5 +1,5 @@
 """
-InsuranceRAGBot Metrics Dashboard
+General-Purpose RAG Bot Metrics Dashboard
 Run with: streamlit run dashboard.py
 """
 import streamlit as st
@@ -18,13 +18,13 @@ from app.utils.metrics import MetricsTracker
 
 # Set page configuration
 st.set_page_config(
-    page_title="InsuranceRAGBot Metrics Dashboard",
+    page_title="General-Purpose RAG Bot Metrics Dashboard",
     page_icon="📊",
     layout="wide"
 )
 
 # Dashboard title
-st.title("InsuranceRAGBot Metrics Dashboard")
+st.title("General-Purpose RAG Bot Metrics Dashboard")
 
 # Sidebar filters
 st.sidebar.header("Filters")
@@ -312,8 +312,8 @@ if auto_refresh:
 st.sidebar.markdown("---")
 st.sidebar.info(
     """
-    **InsuranceRAGBot Metrics Dashboard**
+    **General-Purpose RAG Bot Metrics Dashboard**
     
-    This dashboard shows real-time metrics for the InsuranceRAGBot multi-agent RAG system.
+    This dashboard shows real-time metrics for the General-Purpose RAG Bot multi-agent system.
     """
 ) 

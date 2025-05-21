@@ -18,7 +18,7 @@ def create_vectorstore(documents=None, save_path=VECTOR_DB_PATH):
     os.makedirs(save_path, exist_ok=True)
     
     # Create and persist Chroma vectorstore
-    collection_name = "insurance_docs"
+    collection_name = "knowledge_docs"
     persist_directory = os.path.join(save_path, "chroma_db")
     
     vectorstore = Chroma.from_documents(
@@ -40,7 +40,7 @@ def load_vectorstore(load_path=VECTOR_DB_PATH):
     """
     try:
         persist_directory = os.path.join(load_path, "chroma_db")
-        collection_name = "insurance_docs"
+        collection_name = "knowledge_docs"
         embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
         
         # Load the persisted Chroma vectorstore

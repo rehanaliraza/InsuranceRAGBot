@@ -21,13 +21,13 @@ class MasterControlProgram:
     def route_query(self, query):
         """Determine which agent should handle the query."""
         router_prompt = ChatPromptTemplate.from_template("""
-        You are a query router for an insurance Q&A system.
+        You are a query router for a general-purpose Q&A system.
         Your job is to analyze the question and decide which specialized agent should handle it.
         
         Available agents:
-        - developer: For technical questions about insurance policies, coverage details, and specific terms
-        - writer: For questions needing clear, simple explanations of insurance concepts
-        - tester: For questions requiring fact-checking or validation against insurance regulations
+        - developer: For technical questions requiring detailed explanations and specialized knowledge
+        - writer: For questions needing clear, simple explanations of complex concepts
+        - tester: For questions requiring fact-checking or validation of information
         
         Question: {question}
         
@@ -70,7 +70,7 @@ class MasterControlProgram:
         primary_result = self.agents[primary_agent].process(query)
         
         # Then, have the tester agent validate the answer
-        validation_query = f"Question: {query}\n\nProposed answer: {primary_result}\n\nIs this answer accurate based on insurance information?"
+        validation_query = f"Question: {query}\n\nProposed answer: {primary_result}\n\nIs this answer accurate based on the available information?"
         validation_result = self.agents["tester"].process(validation_query)
         
         # Store in memory
