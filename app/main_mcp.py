@@ -115,19 +115,19 @@ async def query(query_request: QueryRequest):
 
 @app.post("/api/sales", response_model=QueryResponse)
 async def sales_query(query_request: QueryRequest):
-    """Process a query specifically using the Sales Agent."""
+    """Process a query using the Writer Agent as a replacement for the Sales Agent."""
     try:
         logger.info(f"Received sales query: {query_request.query}")
         
-        # Force the sales agent to be used
+        # Use the writer agent instead of sales
         result = mcp_executor.execute_query(
             query=query_request.query,
-            agent_type="sales"
+            agent_type="writer"
         )
         
-        logger.info(f"Sales query processed successfully")
+        logger.info(f"Sales query processed successfully (using writer agent)")
         return {
-            "agent": "Sales",
+            "agent": "Writer",
             "response": result['response']
         }
     except Exception as e:

@@ -6,6 +6,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from enum import Enum
 from config import AGENTS
+from app.utils.function_parser import FunctionDetectionParser
+from app.utils.custom_functions import get_function_descriptions
 
 class AgentType(Enum):
     """Enum of available agent types"""
@@ -26,6 +28,20 @@ class PromptProtocol:
         """Initialize default prompt templates for each agent type"""
         templates = {}
         
+        # Get custom function descriptions for prompts
+        function_descriptions = get_function_descriptions()
+        functions_list = "\n".join([f"- {name}: {desc}" for name, desc in function_descriptions.items()])
+        
+        # Function explanation text to add to prompts
+        function_instructions = f"""
+        You have access to the following custom functions:
+        {functions_list}
+        
+        When a user's query mentions one of these functions (e.g., "What is premOp(4,1)?"), 
+        you should use the function to compute the result. Include both the function call and 
+        the result in your answer.
+        """
+        
         # Developer Agent Prompt
         templates[AgentType.DEVELOPER.value] = ChatPromptTemplate.from_template("""
         You are a {agent_type} specializing in technical concepts.
@@ -37,6 +53,8 @@ class PromptProtocol:
         Use the following context to answer the question.
         Focus on accuracy and technical precision in your answers.
         Include specific details and terminology where relevant.
+        
+        {function_instructions}
         
         IMPORTANT: After answering the user's question, ALWAYS include a single natural follow-up 
         question that shows you're interested in helping them further understand the topic.
@@ -63,6 +81,8 @@ class PromptProtocol:
         Use the following context to answer the question.
         Focus on clarity, readability, and helpfulness.
         
+        {function_instructions}
+        
         IMPORTANT: After providing your explanation, ALWAYS end with a natural, conversational 
         follow-up question that builds on their interest in the topic and helps you understand 
         what else they might want to know.
@@ -88,6 +108,8 @@ class PromptProtocol:
         
         Use the following context to answer the question.
         Focus on factual accuracy and references to specific reliable sources when available.
+        
+        {function_instructions}
         
         IMPORTANT: After providing your fact-checking response, include a single thoughtful
         follow-up question that helps deepen the discussion and shows your interest in
@@ -130,12 +152,27 @@ class PromptProtocol:
         """Format variables for prompt template"""
         agent_type = context["agent_type"]
         
+        # Get custom function descriptions for prompts
+        function_descriptions = get_function_descriptions()
+        functions_list = "\n".join([f"- {name}: {desc}" for name, desc in function_descriptions.items()])
+        
+        # Function explanation text for prompts
+        function_instructions = f"""
+        You have access to the following custom functions:
+        {functions_list}
+        
+        When a user's query mentions one of these functions (e.g., "What is premOp(4,1)?"), 
+        you should use the function to compute the result. Include both the function call and 
+        the result in your answer.
+        """
+        
         # Prepare variables
         variables = {
             "agent_type": AGENTS[agent_type]["name"],
             "agent_description": AGENTS[agent_type]["description"],
             "query": context["query"],
             "documents": context["documents"],
+            "function_instructions": function_instructions
         }
         
         # Add history section if available
@@ -153,16 +190,40 @@ class OutputProtocol:
     def __init__(self):
         self._parsers = {}
         self._default_parser = StrOutputParser()
-    
-    def parse_output(self, output: Any, agent_type: Optional[str] = None) -> str:
-        """Parse output based on agent type"""
-        # Use specialized parser if available
-        if agent_type in self._parsers:
-            return self._parsers[agent_type].parse(output)
+        self._function_parser = FunctionDetectionParser()
         
-        # Otherwise use default parser
-        return self._default_parser.parse(output)
+        # Register the function detection parser with all agent types
+        self.register_function_parser_for_all_agents()
+    
+    def register_function_parser_for_all_agents(self):
+        """Register the function parser for all agent types"""
+        for agent_type in [e.value for e in AgentType]:
+            if agent_type != AgentType.ROUTER.value:  # Skip for router agent
+                self._parsers[agent_type] = self._function_parser
+    
+    def parse_output(self, output: Any) -> str:
+        """Parse output based on agent type"""
+        # If this is an invoke with parameters from a chain
+        if isinstance(output, dict) and "output" in output and "agent_type" in output:
+            agent_type = output["agent_type"]
+            content = output["output"]
+            
+            # Use specialized parser if available
+            if agent_type in self._parsers:
+                return self._parsers[agent_type].parse(content)
+            
+            # Otherwise use default parser
+            return self._default_parser.parse(content)
+        
+        # For direct invocations without agent_type
+        else:
+            # Use default parser
+            return self._default_parser.parse(output)
     
     def register_parser(self, agent_type: str, parser: Any) -> None:
         """Register a specialized parser for an agent type"""
-        self._parsers[agent_type] = parser 
+        self._parsers[agent_type] = parser
+        
+    def get_function_calls(self) -> List[Dict[str, Any]]:
+        """Get the list of function calls detected in the last response"""
+        return self._function_parser.get_function_calls() 

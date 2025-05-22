@@ -193,6 +193,9 @@ class MCPExecutor:
             doc_count = len(context["documents"].split("\n\n"))
             MetricsTracker.track_retrieval_metrics(query, doc_count, query_id=query_id)
         
+        # Clear any previous function calls
+        self.output_protocol._function_parser.clear_function_calls()
+        
         # Get prompt for agent type
         prompt = self.prompt_protocol.get_prompt(agent_type)
         
@@ -202,15 +205,56 @@ class MCPExecutor:
         # Format the variables properly
         formatted_context = self.prompt_protocol.format_prompt_variables(context)
         
-        chain = prompt | model | self.output_protocol._default_parser
+        # Create chain with the appropriate parser
+        if agent_type != "router":
+            # Use function detection for all agents except router
+            # First run the raw chain
+            raw_chain = prompt | model
+            response = raw_chain.invoke(formatted_context)
+            
+            # Then process with function detection
+            function_parser = self.output_protocol._function_parser
+            processed_response = function_parser.parse(response)
+            
+            # If we got a valid string response, use it
+            if isinstance(processed_response, str):
+                response = processed_response
+            else:
+                # Log warning if the processing didn't work as expected
+                self.logger.warning(f"Function parser returned non-string type: {type(processed_response)}")
+        else:
+            # Use default parser for router agent
+            chain = prompt | model | self.output_protocol._default_parser
+            response = chain.invoke(formatted_context)
         
         try:
-            # Use the properly formatted context
-            response = chain.invoke(formatted_context)
-            
             # Track LLM latency
             llm_latency = time.time() - llm_start
             MetricsTracker.track_latency("llm_response", agent_type, llm_latency, query_id)
+            
+            # Get any detected function calls
+            function_calls = self.output_protocol.get_function_calls()
+            
+            # Log function usage if any functions were called
+            if function_calls:
+                func_names = [call['function'] for call in function_calls]
+                self.logger.info(f"Functions executed: {', '.join(func_names)}")
+                
+                # Terminal display for functions - Make this very visible
+                print("\n" + "="*80)
+                print(f"FUNCTIONS EXECUTED IN QUERY: \"{query[:50]}{'...' if len(query) > 50 else ''}\"")
+                print("="*80)
+                
+                # Display each unique function call
+                for i, call in enumerate(function_calls):
+                    func_name = call['function']
+                    args_str = ', '.join(str(arg) for arg in call['arguments'])
+                    result = call['result']
+                    
+                    print(f"\nFUNCTION: {func_name}({args_str})")
+                    print(f"RESULT: {result}")
+                
+                print("="*80 + "\n")
             
             # Estimate token usage (simple estimation)
             prompt_tokens = len(str(context)) // 3  # Rough estimate: 3 chars per token
@@ -237,15 +281,25 @@ class MCPExecutor:
             total_latency = time.time() - start_time
             MetricsTracker.track_latency("total", agent_type, total_latency, query_id)
             
+            # Include function call information in the response metrics
+            metrics = {
+                "query_id": query_id,
+                "total_latency": total_latency,
+                "llm_latency": llm_latency,
+                "retrieval_latency": retrieval_latency
+            }
+            
+            # Add function call metrics if any functions were called
+            if function_calls:
+                metrics["functions_called"] = [
+                    {"name": call["function"], "args": call["arguments"]} 
+                    for call in function_calls
+                ]
+            
             return {
                 "agent": agent_type,
                 "response": response,
-                "metrics": {
-                    "query_id": query_id,
-                    "total_latency": total_latency,
-                    "llm_latency": llm_latency,
-                    "retrieval_latency": retrieval_latency
-                }
+                "metrics": metrics
             }
         except Exception as e:
             self.logger.error(f"Error executing query: {str(e)}", exc_info=True)

@@ -15,6 +15,7 @@ A multi-agent RAG (Retrieval-Augmented Generation) system for answering insuranc
 - **Model-Context-Protocol Architecture**: Clean separation of concerns for better maintainability
 - **Sales Intelligence**: Identifies sales opportunities and provides personalized recommendations
 - **Conversational Sales Approach**: All agents are trained to include follow-up questions that identify insurance needs
+- **Custom Functions**: Built-in functions that can be invoked during conversations to perform calculations or API calls
 
 ## Setup
 
@@ -104,6 +105,134 @@ If you encounter issues:
    ```
    pip install -r requirements.txt
    ```
+
+## Custom Functions
+
+The InsuranceRAGBot includes a system for defining and executing custom functions during chat interactions. These functions can perform calculations, API calls, data processing, or any other operations not built into the language model.
+
+### How Custom Functions Work
+
+1. When a user query mentions a function call pattern like `functionName(arg1, arg2)`, the bot automatically:
+   - Detects the function call in the text
+   - Looks up the function in the registered custom functions
+   - Executes the function with the provided arguments
+   - Includes the result in the response
+
+2. This enables interactive features like:
+   - Real-time calculations
+   - API calls to external services
+   - Data transformations and processing
+   - Insurance-specific operations
+
+### Available Custom Functions
+
+The bot comes with several pre-defined functions:
+
+- `premOp(a, b)`: Adds a plus twice b
+- `factorial(n)`: Calculates the factorial of a number
+- `get_weather(city)`: Gets weather information for a city
+- `translate_text(text, target_language)`: Translates text to another language
+- `calculate_mortgage(principal, interest_rate, years)`: Calculates mortgage payments
+- `extract_numbers(text)`: Extracts all numbers from a text string
+- `latin_api()`: Fetches sample data from a public API
+
+### Adding Your Own Custom Functions
+
+To add a new custom function to the bot:
+
+1. **Define your function in `app/utils/custom_functions.py`**
+
+   ```python
+   def my_custom_function(param1: type, param2: type) -> return_type:
+       """
+       Brief description of what the function does
+       
+       Args:
+           param1: Description of first parameter
+           param2: Description of second parameter
+           
+       Returns:
+           Description of return value
+           
+       Example:
+           my_custom_function(value1, value2) -> expected_result
+       """
+       logger.info(f"Executing my_custom_function({param1}, {param2})")
+       
+       # Function implementation
+       result = ...
+       
+       logger.info(f"my_custom_function result: {result}")
+       return result
+   ```
+
+2. **Register your function in the `CUSTOM_FUNCTIONS` dictionary**
+
+   At the bottom of `app/utils/custom_functions.py`, add your function to the CUSTOM_FUNCTIONS dictionary:
+
+   ```python
+   CUSTOM_FUNCTIONS = {
+       # ... existing functions ...
+       "my_custom_function": my_custom_function
+   }
+   ```
+
+3. **Follow these best practices when creating functions:**
+
+   - **Use proper type hints** for parameters and return values
+   - **Write comprehensive docstrings** with Args, Returns, and Example sections
+   - **Add appropriate logging** using the logger object
+   - **Include error handling** to prevent crashes
+   - **Keep functions simple** and focused on a single task
+   - **Validate input parameters** to prevent unexpected behavior
+   - **Format return values** consistently
+
+4. **Test your function**
+
+   Use the provided test scripts to verify your function works correctly:
+
+   ```bash
+   # Basic test script
+   python test_custom_functions.py
+   
+   # Interactive testing tool
+   python custom_function_test.py
+   ```
+
+   The interactive testing tool allows you to:
+   - Test functions directly with custom arguments
+   - Test function detection in various text formats
+   - Simulate how the bot processes function calls in responses
+
+### Function Execution Process
+
+When the bot detects a potential function call in text:
+
+1. It extracts the function name and arguments using regex pattern matching
+2. Arguments are parsed and converted to appropriate types (numbers, strings, booleans)
+3. The function is executed with the provided arguments
+4. The result is formatted and inserted back into the response
+5. A record of the function call is maintained for logging and metrics
+
+### Advanced Function Features
+
+The custom function system includes several advanced features:
+
+- **Deduplication**: If the same function with the same arguments is called multiple times, it's only executed once
+- **Error Handling**: If a function throws an exception, the error is captured and displayed in the response
+- **Type Conversion**: Arguments are automatically converted to appropriate types (strings, numbers, booleans)
+- **Result Formatting**: Complex results (like dictionaries or lists) are properly formatted as JSON
+- **Function Descriptions**: Get descriptions of all available functions with `get_function_descriptions()`
+
+### Example Usage
+
+Users can trigger custom functions by simply mentioning them in their queries:
+
+- "What would my mortgage payment be for calculate_mortgage(300000, 0.035, 30)?"
+- "I need to know factorial(5) for my calculation."
+- "What's the weather like in get_weather('New York')?"
+
+The bot will automatically execute these functions and include the results in its response.
 
 ## Adding Custom Documents
 
@@ -248,6 +377,8 @@ To verify your document was added to the knowledge base:
   - `templates/`: HTML templates
   - `static/`: CSS and other static files
   - `utils/`: Utility functions
+    - `custom_functions.py`: Custom functions for the bot
+    - `function_parser.py`: Parser for detecting and executing functions
   - `main.py`: Original FastAPI application
   - `main_mcp.py`: MCP-based FastAPI application
 - `config.py`: Configuration settings
@@ -257,6 +388,7 @@ To verify your document was added to the knowledge base:
 - `simple_app.py`: Simplified version for easier startup
 - `fix_imports.py`: Helper script to fix LangChain imports
 - `test_openai.py`: Test script for OpenAI API connectivity
+- `test_custom_functions.py`: Test script for custom functions
 - `init_vectorstore.py`: Script to initialize the vectorstore
 
 ## Model-Context-Protocol (MCP) Architecture
